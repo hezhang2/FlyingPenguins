@@ -24,6 +24,13 @@ public void draw(){
 	bob.show();
 	shooter.show();
 }
+public void mouseDragged(){
+	System.out.println("pressed");
+	shooter.pull();
+}
+public void mouseReleased(){
+	shooter.setReleased();
+}
 
 public class Penguin{
 	private float myX,myY,mySize;
@@ -55,27 +62,45 @@ public class Penguin{
 public class SlingShot{
 	private float myX,myY;
 	private float strX,strY;
+	private boolean wasDragged;
 	SlingShot(float x, float y){
 		myX=x;
 		myY=y;
+		wasDragged=false;
+		strX=myX;
+		strY=myY;
 	}
 	public void show(){
 		stroke(50);
+		strokeWeight(2);
 		line(myX,myY,strX,strY);
 		noStroke();
 		fill(50);
-		rect(myX-2.5f,myY,5,50);
+		rect(myX-2.5f,myY-2,5,50);
 	}
 	public void pull(){
-		strX=mouseX;
-		strY=mouseY;
+		if(mouseX>myX-2.5f&&mouseX<myX+2.5f&&
+		   mouseY>myY-2&&mouseY<myY+50)
+			wasDragged=true;
+		if(wasDragged==true){
+			strX=mouseX;
+			System.out.println("mouseX: "+mouseX);
+			strY=mouseY;
+			System.out.println("mouseY: "+mouseY);
+		}
 	}
-	public void mousePressed(){
-		pull();
+	public void setReleased(){
+		if(!(mouseX>myX-2.5f&&mouseX<myX+2.5f&&
+		   mouseY>myY-2&&mouseY<myY+50))
+			wasDragged=false;
+		strX=myX;
+		strY=myY;
 	}
+	public boolean getWasDragged(){return wasDragged;}
 	public float getX(){return myX;}
 	public float getY(){return myY;}
 }
+
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "FlyingPenguins" };
     if (passedArgs != null) {
