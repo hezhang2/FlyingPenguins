@@ -3,6 +3,7 @@ Penguin bob= new Penguin(shooter.getX()+57, shooter.getY()+50);
 PImage standFront;
 PImage standBack;
 PImage penny;
+int ableRe=0;
 public void setup() {
   frameRate(100);
   size(800, 450);
@@ -17,31 +18,50 @@ public void draw() {
   
   bob.move();
   bob.gravity();
+  if(bob.getVeloX()<=0&&ableRe==1){
+    ableRe=2;
+    shooter.setWasDragged(false);
+  }
   
   shooter.showSlingshotBack();
-  if(bob.getIsFlying()==false&&bob.getX()<=375){
+  if(bob.getIsFlying()==false&&bob.getX()<375&&mousePressed==true&&ableRe!=2&&shooter.getWasDragged()==true){
     shooter.showLineBack();
   }
   bob.show();
-  if(bob.getIsFlying()==false&&bob.getX()<=375){
+  if(bob.getIsFlying()==false&&bob.getX()<=375&&mousePressed==true&&ableRe!=2&&shooter.getWasDragged()==true){
     shooter.showLineFront();
   }
   shooter.showSlingshotFront();
   
-  stroke(255,0,0);
-  point(shooter.getX()+90, shooter.getY()+90);
-  point(bob.getX()+25,bob.getY()+25);
+//  stroke(255,0,0);
+//  point(shooter.getX()+90, shooter.getY()+90);
+//  point(bob.getX()+25,bob.getY()+25);
+}
+public void mousePressed(){
+  if(ableRe==2){
+    ableRe=0;
+    bob.setVeloX(0);
+    bob.setVeloY(0);
+    bob.setX(shooter.getX()+57);
+    bob.setY(shooter.getY()+50);
+    bob.setGravity(false);
+  }
 }
 public void mouseDragged() {
-  shooter.pull();
+  if(ableRe==0){
+    shooter.pull();
+  }
 }
 public void mouseReleased() {
-  shooter.setReleased();if(shooter.getWasDragged()==false&&
-     bob.getX()!=107.0&&
-     bob.getY()!=250.0){
+  if(shooter.getWasDragged()==true&&ableRe==0){
+    ableRe=1;
+    shooter.setReleased();
+    if(bob.getX()!=107.0&&
+       bob.getY()!=250.0){
        bob.setGravity(true);
        bob.setVeloCompo();
      }
+  }
 }
 
 public class Penguin {
@@ -66,7 +86,7 @@ public class Penguin {
    myVeloY=-(bob.getY()+25-(shooter.getY()+90))/7;
   }
   public void move(){
-    if(myY>=375){
+    if(myY>375){
       setGravity(false);
       myY=375;
       if(myVeloX<0){
@@ -77,8 +97,6 @@ public class Penguin {
       }
     }
     myX+=myVeloX;
-    print(myVeloX);
-    println(-(bob.getY()+25-(shooter.getY()+90))/4);
     myY+=myVeloY;
   }
   public void gravity(){
@@ -88,9 +106,13 @@ public class Penguin {
   }
   public float getX(){return myX;}
   public float getY(){return myY;}
+  public float getVeloX(){return myVeloX;}
+  public float getVeloY(){return myVeloY;}
   public boolean getIsFlying(){return isFlying;}
   public void setX(float x){myX=x;}
   public void setY(float y){myY=y;}
+  public void setVeloX(float x){myVeloX=x;}
+  public void setVeloY(float y){myVeloY=y;}
   public void setGravity(boolean mode){isFlying=mode;}
 }
 
@@ -125,17 +147,30 @@ public class SlingShot {
     if (mouseX>bob.getX()&&mouseX<bob.getX()+50&&
       mouseY>bob.getY()&&mouseY<bob.getY()+50)
       wasDragged=true;
-    if (wasDragged==true) {
-      bob.setX(mouseX-25);
-      bob.setY(mouseY-25);
+    if (wasDragged==true&&ableRe==0) {
+      if(mouseX<50){
+        bob.setX(25);
+      }else if(mouseX>shooter.getX()+90){
+        bob.setX(shooter.getX()+90-25);
+      }else{
+        bob.setX(mouseX-25);
+      }
+      if(mouseY>400){
+        bob.setY(375);
+      }else if(mouseY<shooter.getY()){
+        bob.setY(shooter.getY()-25);
+      }else{
+        bob.setY(mouseY-25);
+      }
     }
   }
   public void setReleased() {
-    if (!(mouseX==107&&mouseY==250))
-      wasDragged=false;
+//    if (!(mouseX==107&&mouseY==250))
+//      wasDragged=false;
     strX=myX+130;
     strY=myY+60;
   }
+  public void setWasDragged(boolean bol){wasDragged=bol;}
   public boolean getWasDragged(){return wasDragged;}
   public float getX() {return myX;}
   public float getY() {return myY;}
