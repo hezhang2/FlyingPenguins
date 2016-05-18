@@ -1,21 +1,26 @@
+//Don't look; this is a mess OTL
 SlingShot shooter= new SlingShot(50, 200);
 Penguin bob= new Penguin(shooter.getX()+57, shooter.getY()+50);
+Ground[] floors=new Ground[2]; 
 PImage standFront;
 PImage standBack;
 PImage penny;
 int ableRe=0;
+int chooseFloor;
 public void setup() {
   frameRate(100);
   size(800, 450);
   standFront=loadImage("SlingshotFront.png");
   standBack=loadImage("SlingshotBack.png");
   penny=loadImage("Penguin.png");
+  floors[0]=new Ground(.1,255,255,255,255);//snow
+  floors[1]=new Ground(.03,189,217,237,200);//ice
+  //  floor[2]=Ground();//extra
+  chooseFloor=0;
 }
 public void draw() {
   background(#343D66);
-  noStroke();
-  rect(0,375,800,75);
-  
+  floors[chooseFloor].show();
   bob.move();
   bob.gravity();
   if(bob.getVeloX()<=0&&ableRe==1){
@@ -32,10 +37,13 @@ public void draw() {
     shooter.showLineFront();
   }
   shooter.showSlingshotFront();
-  
-//  stroke(255,0,0);
-//  point(shooter.getX()+90, shooter.getY()+90);
-//  point(bob.getX()+25,bob.getY()+25);
+}
+public void keyPressed(){
+  if(chooseFloor==0){
+    chooseFloor=1;
+  }else{
+    chooseFloor=0;
+  }
 }
 public void mousePressed(){
   if(ableRe==2){
@@ -64,7 +72,10 @@ public void mouseReleased() {
   }
 }
 
-public class Penguin {
+public class Penguin {//I gave up on actually making these classes;
+                      //If you're looking at these, don't use them
+                      //They cannot be used independantly beacuse I got lazy
+                      //Sorry m(_ _;;)m
   private float myX, myY, mySize;
   private float myVeloX, myVeloY;
   private float myMass;
@@ -93,7 +104,7 @@ public class Penguin {
         myVeloX=0;
       }
       if(myVeloX>0){
-        myVeloX-=.1;
+        myVeloX-=floors[chooseFloor].getFriction();
       }
     }
     myX+=myVeloX;
@@ -165,8 +176,6 @@ public class SlingShot {
     }
   }
   public void setReleased() {
-//    if (!(mouseX==107&&mouseY==250))
-//      wasDragged=false;
     strX=myX+130;
     strY=myY+60;
   }
@@ -176,4 +185,24 @@ public class SlingShot {
   public float getY() {return myY;}
   public float getStrX() {return strX;}
   public float getStrY(){return strY;}
+}
+
+public class Ground{
+  private float myFriction;
+  private int myR, myG, myB, myT;
+  Ground(float muse, int r, int g, int b, int t){
+    myFriction=muse;
+    myR=r;
+    myG=g;
+    myB=b;
+    myT=t;
+  }
+  public void show(){
+    noStroke();
+    fill(myR,myG,myB,myT);
+    rect(0,375,800,75);
+  }
+  public float getFriction(){
+    return myFriction;
+  }
 }
