@@ -13,7 +13,7 @@ public void setup() {
 }
 public void draw() {
   background(#343D66);
-  strokeWeight(0);
+  noStroke();
   rect(0,375,800,75);
   
   bob.move();
